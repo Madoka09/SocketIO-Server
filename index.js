@@ -1,6 +1,13 @@
 let app = require('express')();
 let server = require('http').createServer(app);
 let io = require('socket.io')(server);
+var cors = require('cors')
+
+app.use(cors())
+
+app.get('/', function (req, res, next) {
+    res.json({msg: 'This is CORS-enabled for all origins!'})
+})
 
 io.on('connection', (socket) => {
 
