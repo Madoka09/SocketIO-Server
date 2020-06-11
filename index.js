@@ -1,13 +1,13 @@
-let app = require('express')();
-let server = require('http').createServer(app);
+let app = require('express');
+
+const PORT = process.env.PORT || 3000;
+const INDEX = '/index.html';
+
+const server = app()
+    .use((req, res) => res.sendFile(INDEX, {root: __dirname}))
+    .listen(PORT, () => console.log(`En puerto ${PORT}`))
+
 let io = require('socket.io')(server);
-var cors = require('cors')
-
-app.use(cors())
-
-app.get('/', function (req, res, next) {
-    res.json({msg: 'This is CORS-enabled for all origins!'})
-})
 
 io.on('connection', (socket) => {
 
@@ -23,10 +23,4 @@ io.on('connection', (socket) => {
     socket.on('send-message', (message) => {
         io.emit('message', { msg: message.text, user: socket.username, createdAt: new Date() });
     });
-});
-
-var port = process.env.PORT || 3001;
-
-server.listen(port, function () {
-    console.log('listening in http://localhost:' + port);
 });
