@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
         })
 
         socket.broadcast.emit('broadcast', user.room)
+        //console.log(user.room);
     })
 
 
@@ -58,22 +59,51 @@ io.on('connection', (socket) => {
     socket.on('send-message', (message) => {
         const user = getCurrentUser(socket.id);
 
-        io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date() });
-        console.log(`sending message to ${user.room}`)
+        io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+        socket.broadcast.emit('save-local', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+        //console.log(`sending message to ${user.room}`)
     });
+
+    // message to waiter chat index
 
     // send message from waiter
     socket.on('waiter-message', (message) => {
         const user = getCurrentUser(socket.id);
 
-        io.to(message.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date() })
-        console.log(`cuarto del mesero ${message.room}`)
-        console.log(`Dejando cuarto ${user.room}`)
+        io.to(message.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room })
+        //console.log(`cuarto del mesero ${message.room}`)
+        //console.log(`Dejando cuarto ${user.room}`)
     })
 
     socket.on('getRooms', function() {
        io.emit('getRooms', getAllRooms())
-       console.log(getAllRooms())
+       //console.log(getAllRooms())
+    })
+
+    // typing alert for tables
+    socket.on('typingTable', (data) =>{
+        const user = getCurrentUser(socket.id);
+
+        if(data.typing === true){
+            io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
+        } else {
+            io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
+        }
+
+        //console.log(`Escribiendo ${data.typing}, usuario que escribe ${user.username}`)
+    })
+
+    // typing alert for waiters
+    socket.on('typingWaiter', (data) =>{
+        const user = getCurrentUser(socket.id);
+
+        if(data.typing === true){
+            io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
+        } else {
+            io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
+        }
+
+        //console.log(`Escribiendo ${data.typing}, usuario que escribe ${user.username}`)
     })
 
 });
