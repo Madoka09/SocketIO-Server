@@ -15,7 +15,7 @@ io.on('connection', (socket) => {
     console.log('new ws connection');
 
     // when client from table connects
-    socket.on('joinRoom', ({ username, room }) => {
+    socket.once('joinRoom', ({ username, room }) => {
         const user = userJoin(socket.id, username, room);
         socket.join(user.room);
 
