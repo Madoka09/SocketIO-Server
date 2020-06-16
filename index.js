@@ -5,7 +5,7 @@ const server = app()
     .use((req, res) => res.sendFile(INDEX, {root: __dirname}))
     .listen(PORT, () => console.log(`En puerto ${PORT}`))
 
-const { userJoin, getCurrentUser, userLeave, getRoomUsers, getAllRooms, roomLeave } = require ('./utils/users');
+const { userJoin, getCurrentUser, userLeave, getRoomUsers, getAllRooms, roomLeave, getDestinationUser } = require ('./utils/users');
 let io = require('socket.io')(server);
 
 
@@ -48,7 +48,6 @@ io.on('connection', (socket) => {
                 room: user.room,
                 users: getRoomUsers(user.room)
             })
-
             roomLeave(user.room);
         }
 
@@ -61,7 +60,8 @@ io.on('connection', (socket) => {
 
         io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         socket.broadcast.emit('save-local', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
-        //console.log(`sending message to ${user.room}`)
+        console.log(`sending message to ${user.room}`)
+        console.log(`mensaje del restaurante ${message.restaurant}`)
     });
 
     // message to waiter chat index
@@ -70,9 +70,11 @@ io.on('connection', (socket) => {
     socket.on('waiter-message', (message) => {
         const user = getCurrentUser(socket.id);
 
-        io.to(message.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room })
+        io.to(message.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
+        io.to(user.room).emit('self-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         //console.log(`cuarto del mesero ${message.room}`)
         //console.log(`Dejando cuarto ${user.room}`)
+        console.log(`intentaras escribirle al usuario con el id ${message.id}, io soy ${user.username}`)
     })
 
     socket.on('getRooms', function() {

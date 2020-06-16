@@ -20,6 +20,11 @@ function getCurrentUser(id){
     return users.find(user => user.id === id);
 }
 
+// Get destination User
+function getDestinationUser(id){
+    return users.find(user => user.id === id);
+}
+
 // Get room users
 function getRoomUsers(room){
     return users.filter(user => user.room === room);
@@ -54,5 +59,6 @@ module.exports = {
     getRoomUsers,
     userLeave,
     getAllRooms,
-    roomLeave
+    roomLeave,
+    getDestinationUser
 };
