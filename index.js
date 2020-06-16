@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
         const user = getCurrentUser(socket.id);
 
         io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
-        socket.broadcast.emit('save-local', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+        //socket.broadcast.emit('save-local', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         //console.log(`sending message to ${user.room}`)
         //console.log(`mensaje del restaurante ${message.restaurant}`)
     });
@@ -71,7 +71,9 @@ io.on('connection', (socket) => {
         const user = getCurrentUser(socket.id);
 
         io.to(message.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
-        io.to(user.room).emit('self-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+        io.to(user.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
+
+        //io.to(user.room).emit('self-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         //console.log(`cuarto del mesero ${message.room}`)
         //console.log(`Dejando cuarto ${user.room}`)
         //console.log(`intentaras escribirle al usuario con el id ${message.id}, io soy ${user.username}`)
