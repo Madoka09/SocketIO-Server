@@ -60,12 +60,12 @@ io.on('connection', (socket) => {
 
         io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         socket.broadcast.emit('save-local', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
-        console.log(`sending message to ${user.room}`)
-        console.log(`mensaje del restaurante ${message.restaurant}`)
+        //console.log(`sending message to ${user.room}`)
+        //console.log(`mensaje del restaurante ${message.restaurant}`)
     });
 
     // message to waiter chat index
-
+ 
     // send message from waiter
     socket.on('waiter-message', (message) => {
         const user = getCurrentUser(socket.id);
@@ -74,7 +74,7 @@ io.on('connection', (socket) => {
         io.to(user.room).emit('self-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         //console.log(`cuarto del mesero ${message.room}`)
         //console.log(`Dejando cuarto ${user.room}`)
-        console.log(`intentaras escribirle al usuario con el id ${message.id}, io soy ${user.username}`)
+        //console.log(`intentaras escribirle al usuario con el id ${message.id}, io soy ${user.username}`)
     })
 
     socket.on('getRooms', function() {
@@ -86,10 +86,14 @@ io.on('connection', (socket) => {
     socket.on('typingTable', (data) =>{
         const user = getCurrentUser(socket.id);
 
-        if(data.typing === true){
-            io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
-        } else {
-            io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
+        try {
+            if(data.typing === true){
+                io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
+            } else {
+                io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
+            }
+        } catch (e) {
+            console.log(e)
         }
 
         //console.log(`Escribiendo ${data.typing}, usuario que escribe ${user.username}`)
@@ -99,11 +103,16 @@ io.on('connection', (socket) => {
     socket.on('typingWaiter', (data) =>{
         const user = getCurrentUser(socket.id);
 
-        if(data.typing === true){
-            io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
-        } else {
-            io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
+        try {
+            if(data.typing === true){
+                io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
+            } else {
+                io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
+            }
+        } catch(e) {
+            console.log(e)
         }
+        
 
         //console.log(`Escribiendo ${data.typing}, usuario que escribe ${user.username}`)
     })
