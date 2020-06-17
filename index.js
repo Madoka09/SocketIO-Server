@@ -58,7 +58,11 @@ io.on('connection', (socket) => {
     socket.on('send-message', (message) => {
         const user = getCurrentUser(socket.id);
 
-        io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+        try{
+            io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+        } catch(e){
+            console.log(e)
+        }
         //socket.broadcast.emit('save-local', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         //console.log(`sending message to ${user.room}`)
         //console.log(`mensaje del restaurante ${message.restaurant}`)
@@ -70,8 +74,18 @@ io.on('connection', (socket) => {
     socket.on('waiter-message', (message) => {
         const user = getCurrentUser(socket.id);
 
-        io.to(message.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
-        io.to(user.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
+        try{
+            io.to(message.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
+
+        } catch(e){
+            console.log(e)
+        }
+
+        try{
+            io.to(user.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
+        } catch(e){
+            console.log(e)
+        }
 
         //io.to(user.room).emit('self-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
         //console.log(`cuarto del mesero ${message.room}`)
