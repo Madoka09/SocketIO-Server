@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
         const user = getCurrentUser(socket.id);
 
         try{
-            io.to(user.room).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room });
+            io.to(user.room).emit('table-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, table: true });
         } catch(e){
             console.log(e)
         }
@@ -75,14 +75,13 @@ io.on('connection', (socket) => {
         const user = getCurrentUser(socket.id);
 
         try{
-            io.to(message.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
-
+            io.to(message.id).emit('waiter-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, waiter: true, destination: message.destination.user})
         } catch(e){
             console.log(e)
         }
 
         try{
-            io.to(user.id).emit('message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, })
+            io.to(user.id).emit('waiter-message', { msg: message.text, user: user.username, createdAt: new Date(), room: message.room, waiter: true, destination: message.destination.user})
         } catch(e){
             console.log(e)
         }
