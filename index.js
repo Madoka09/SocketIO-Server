@@ -108,7 +108,7 @@ io.on('connection', (socket) => {
                 io.to(user.room).emit('typingTable', {typing: data.typing, user: user.username});
             }
         } catch (e) {
-            console.log(e)
+            socket.disconnect();
         }
 
         //console.log(`Escribiendo ${data.typing}, usuario que escribe ${user.username}`)
@@ -125,7 +125,7 @@ io.on('connection', (socket) => {
                 io.to(data.destination).emit('typingWaiter', {typing: data.typing, user: user.username});
             }
         } catch(e) {
-            console.log(e)
+            socket.disconnect();
         }
         
 
