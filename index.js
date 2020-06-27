@@ -98,6 +98,7 @@ io.on('connection', (socket) => {
     })
 
     // typing alert for tables
+    /*
     socket.on('typingTable', (data) =>{
         const user = getCurrentUser(socket.id);
 
@@ -131,5 +132,6 @@ io.on('connection', (socket) => {
 
         //console.log(`Escribiendo ${data.typing}, usuario que escribe ${user.username}`)
     })
+    */
 
 });
